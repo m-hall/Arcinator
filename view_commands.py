@@ -16,7 +16,7 @@ class ArcinatorViewMessageCommand(sublime_plugin.TextCommand):
         self.view.set_read_only(False)
         self.view.insert(edit, self.view.size(), message + '\n')
         self.view.set_read_only(True)
-        output.highlight_conflicts()
+        # output.highlight_conflicts()
 
 
 class ArcinatorViewClearCommand(sublime_plugin.TextCommand):
