@@ -270,3 +270,57 @@ class ArcinatorStatusCommand(ArcinatorCommand):
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
         self.run_git('status --porcelain -u all', files)
+
+
+class ArcinatorSubmitCommand(ArcinatorCommand):
+    """A command that sends a feature to arcanist for review"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Submit for Review'
+        self.tests = {
+            'tracked': True
+        }
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        self.run_git('diff --preview --browse')
+
+
+class ArcinatorFeatureCommand(ArcinatorCommand):
+    """A command that creates a new feature branch and switches the working copy to it"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'New Feature'
+        self.tests = {
+            'tracked': True
+        }
+
+    def on_done_input(self, value):
+        self.run_git('feature ' + value)
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        sublime.active_window().show_input_panel('Commit message', '', self.on_done_input, self.nothing, self.nothing)
+
+
+class ArcinatorLandCommand(ArcinatorCommand):
+    """A command that lands an approved review"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Land Review'
+        self.tests = {
+            'tracked': True
+        }
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        self.run_git('land --svn-post-commit')
