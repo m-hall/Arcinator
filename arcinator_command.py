@@ -32,6 +32,14 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
         """Starts a process for a native command"""
         return thread.Process(self.command_name, cmd, files, log, async, on_complete)
 
+    def run_git(self, cmd, files=None, log=True, async=True, on_complete=None):
+        """Starts a process for a native command"""
+        return self.run_command('git ' + cmd, files, log, async, on_complete)
+
+    def run_arc(self, cmd, files=None, log=True, async=True, on_complete=None):
+        """Starts a process for a native command"""
+        return self.run_command('arc ' + cmd, files, log, async, on_complete)
+
     def run_external(self, cmd, files):
         """Starts a process for an external command that should run without """
         if not util.use_tortoise():
@@ -222,7 +230,7 @@ class ArcinatorPullCommand(ArcinatorCommand):
     def __init__(self, window):
         """Initialize the command object"""
         super().__init__(window)
-        self.command_name = 'Update'
+        self.command_name = 'Pull'
         self.tests = {
             # 'versionned': True
         }
@@ -231,4 +239,4 @@ class ArcinatorPullCommand(ArcinatorCommand):
         """Runs the command"""
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
-        self.run_command('update', files)
+        self.run_git('pull', files)
