@@ -170,7 +170,6 @@ class ArcinatorCommitCommand(ArcinatorCommand):
         super().__init__(window)
         self.command_name = 'Commit'
         self.tests = {
-            'tracked': True,
             'changed': True
         }
         self.files = None
