@@ -7,11 +7,13 @@ import subprocess
 import time
 from .lib import util, thread, settings, output, panels
 
-LOG_PARSE = r'-{72}[\r\n]+r(\d+) \| ([^|]+) \| ([^|]+) \| [^\n\r]+[\n\r]+(.+)'
-STATUS_PARSE = r'(^[A-W\?\!\ >]+?) +(\+ +)?(.*)'
-INFO_PARSE_REVISION = r'Revision: (\d+)'
-INFO_PARSE_LAST_CHANGE = r'Last Changed Rev: (\d+)'
-INFO_PARSE_URL = r'URL: ([^\n]*)'
+STATUS_COMMAND = 'status --porcelain -u all'
+STATUS_UNTRACKED = r'(^|\n)\?\?'
+STATUS_ADDED = r'(^|\n)A[ MD]'
+STATUS_STAGED = r'(^|\n)M[ MD]'
+STATUS_UNSTAGED = r'(^|\n)[ MARC]M'
+STATUS_DELETED = r'(^|\n)D[ M]'
+STATUS_TRACKED = r'(^|\n)[^\?][^\?]'
 
 
 class ArcinatorCommand(sublime_plugin.WindowCommand):
@@ -42,32 +44,27 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
 
     def run_external(self, cmd, files):
         """Starts a process for an external command that should run without """
-        if not util.use_tortoise():
-            sublime.error_message('Tortoise command can not be run: ' + cmd)
-            return
         command = cmd + ' ' + ' '.join(files)
         util.debug(command)
         return subprocess.Popen(command, stdout=subprocess.PIPE)
 
-    def test_versionned(self, result):
-        """Tests output to verify if a file is versionned"""
-        return re.search(INFO_PARSE_REVISION, result, re.M) is not None
+    def test_tracked(self, result):
+        """Tests output to verify if a file is tracked"""
+        return len(result) == 0 or re.search(STATUS_TRACKED, result, re.M) is not None
 
-    def is_versionned(self, files):
-        """Runs a command to verify if a file is versionned"""
-        if len(files) == 0:
-            return False
+    def test_changed(self, result):
+        """Tests output to verify if a file is tracked"""
+        return len(result) > 0
 
-        for f in files:
-            p = self.run_command('info', [f], False, False)
-            if self.test_versionned(p.output() + p.error()) is True:
-                return True
-        return False
+    def is_tracked(self, files):
+        """Runs a command to verify if a file is tracked"""
+        status = self.run_git(STATUS_COMMAND, files, False, False)
+        return self.test_tracked(status.output())
 
     def is_changed(self, files):
         """Runs a status command to see if a file has been changed since last revision"""
-        p = self.run_command('status', files, False, False)
-        return bool(p.output())
+        status = self.run_git(STATUS_COMMAND, files, False, False)
+        return self.test_changed(status.output())
 
     def is_unchanged(self, files):
         """Checks if a file is unchanged since last revision"""
@@ -100,15 +97,17 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
                 continue
             if uid == tests['uid']:
                 return tests
+        status = self.run_git(STATUS_COMMAND, files, False, False)
         tests = {
             'uid': uid,
             'file': self.is_file(files),
             'folder': self.is_folder(files),
-            'single': self.is_single(files)
+            'single': self.is_single(files),
+            'tracked': self.test_tracked(status.output()),
+            'changed': self.test_changed(status.output()),
+            'timestamp': time.time()
         }
-        tests['versionned'] = self.is_versionned(files)
-        tests['changed'] = self.is_changed(files)
-        tests['timestamp'] = time.time()
+        util.debug(tests)
         ArcinatorCommand.recent_files.append(tests)
         return tests
 
@@ -124,11 +123,10 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
             return False
         items = []
         for change, modifier, path in matches:
-            inSVN = self.is_versionned([path])
             item = {
                 'label': path,
                 'value': path,
-                'selected': inSVN
+                'selected': self.is_tracked([path])
             }
             items.append(item)
         self.items = items
@@ -144,12 +142,6 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
     def select_changes(self):
         """Gets the committable changes"""
         thread.Process('Log', 'svn status', self.files, False, True, self.on_changes_available)
-
-    def get_url(self, file):
-        """Gets the url for a file"""
-        p = self.run_command('info', [file], False, False)
-        m = re.search(INFO_PARSE_URL, p.output(), re.M)
-        return m.group(1)
 
     def run(self, cmd="", paths=None, group=-1, index=-1):
         """Runs the command"""
@@ -178,7 +170,8 @@ class ArcinatorCommitCommand(ArcinatorCommand):
         super().__init__(window)
         self.command_name = 'Commit'
         self.tests = {
-            'versionned': True
+            'tracked': True,
+            'changed': True
         }
         self.files = None
         self.message = None
@@ -232,7 +225,7 @@ class ArcinatorPullCommand(ArcinatorCommand):
         super().__init__(window)
         self.command_name = 'Pull'
         self.tests = {
-            # 'versionned': True
+            'tracked': True
         }
 
     def run(self, paths=None, group=-1, index=-1):
@@ -240,3 +233,21 @@ class ArcinatorPullCommand(ArcinatorCommand):
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
         self.run_git('pull', files)
+
+
+class ArcinatorStatusCommand(ArcinatorCommand):
+    """A command that updates to HEAD"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Status'
+        self.tests = {
+            # 'tracked': True
+        }
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        files = util.get_files(paths, group, index)
+        self.run_git('status --porcelain -u all', files)
