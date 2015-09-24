@@ -236,8 +236,26 @@ class ArcinatorPullCommand(ArcinatorCommand):
         self.run_git('pull', files)
 
 
+class ArcinatorPullRebaseCommand(ArcinatorCommand):
+    """A command that rebases and updates to HEAD"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Pull'
+        self.tests = {
+            'tracked': True
+        }
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        files = util.get_files(paths, group, index)
+        self.run_git('pull --rebase', files)
+
+
 class ArcinatorStatusCommand(ArcinatorCommand):
-    """A command that updates to HEAD"""
+    """A command that gets the status of the repo"""
 
     def __init__(self, window):
         """Initialize the command object"""
