@@ -1,0 +1,81 @@
+// [PackageDev] target_format: plist, ext: tmLanguage
+{
+    "name": "Arcinator Output",
+    "scopeName": "source.arcinator",
+    "fileTypes": ["arcinator-output"],
+    "uuid": "feea73e8-edc4-4c42-b547-847410c70e16",
+    "patterns": [
+        { "include": "#command" }
+    ],
+
+    "repository": {
+        "command": {
+            "name": "meta.command.arcinator",
+            "begin": "^(Command): (.*)$",
+            "end": "^ {4}(Completed)",
+            "beginCaptures": {
+                "1": { "name": "keyword.control.arcinator" },
+                "2": { "name": "string.meta.command.name.arcinator" }
+            },
+            "endCaptures": {
+                "1": { "name": "keyword.control.arcinator" }
+            },
+            "patterns": [
+                { "include": "#commandRaw" },
+                { "include": "#sections" },
+                { "include": "#filePath" }
+            ]
+        },
+        "commandRaw": {
+            "begin": "^ {4}(git|arc)",
+            "end": "$",
+            "beginCaptures": {
+                "1": { "name": "constant.other.command.raw.arcinator" }
+            },
+            "patterns": [
+                { "include": "#commandName" },
+                { "include": "#commandParam" },
+                { "include": "#commandFiles" }
+            ]
+        },
+        "commandName": {
+            "match": " (log|update|commit|revert|status|add|delete|cleanup|lock|unlock|merge|diff|rename|blame|resolve|switch|branch|checkout)",
+            "captures": {
+                "1": { "name": "constant.other.name.raw.arcinator" }
+            }
+        },
+        "commandParam": {
+            "match": " (-(l|r) [0-9]+|-m \".+?\"|-[A-Za-z]|--[a-z0-9-]+)",
+            "captures": {
+                "1": { "name": "variable.parameter.command.arcinator" }
+            }
+        },
+        "commandFiles": {
+            "begin": " \"",
+            "end": "\"",
+            "patterns": [
+                { "include": "#filePath" }
+            ]
+        },
+        "sections": {
+            "match": "^ {4}(Files|Output|Error):",
+            "captures": {
+                "1": { "name": "keyword.control.arcinator" }
+            }
+        },
+        "filePath": {
+            "patterns": [
+                { "include": "#unixPath" },
+                { "include": "#ntPath" }
+            ]
+        },
+        "unixPath": {
+            "match": "\/[^\n\"'']*",
+            "name": "entity.name.filename.unix.arcinator"
+        },
+        "ntPath": {
+            "match": "[A-Za-z]:\\\\[^\n\"'']*",
+            "name": "entity.name.filename.nt.arcinator"
+        }
+    }
+}
