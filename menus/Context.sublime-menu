@@ -1,0 +1,6 @@
+[
+    { "caption": "-" },
+    { "caption": "Clear Output", "command": "arcinator_view_clear", "args": {}},
+    // { "caption": "Open file(s)", "command": "arcinator_output_open_file"},
+    { "caption": "-", "id": "end" }
+]

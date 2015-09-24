@@ -1,0 +1,33 @@
+[
+    // <string>
+    // [auto-insterted]
+    // {list}
+    { "caption": "-" },
+    {
+        "caption": "Arcinator",
+        "children": [
+            { "caption": "New Feature", "command": "arcinator_feature", "args": {"paths":[]}}, // arc feature <name>
+            { "caption": "Switch to feature", "command": "arcinator_switch", "args": {"paths":[]}}, // git checkout <name>
+            { "caption": "-" },
+            { "caption": "Submit For Review", "command": "arcinator_submit", "args": {"paths":[]}}, // arc diff --preview --browse
+            { "caption": "Land Review", "command": "arcinator_land", "args": {"paths":[]}}, // arc land --svn-post-commit
+            { "caption": "-" },
+            { "caption": "Commit (local)", "command": "arcinator_commit", "args": {"paths":[]}}, // git commit -m <message> <file...>
+            { "caption": "Push (remote)", "command": "arcinator_push", "args": {"paths":[]}}, // git push
+            { "caption": "Pull (remote)", "command": "arcinator_pull", "args": {"paths":[]}}, // git pull
+            { "caption": "Pull Rebase (remote)", "command": "arcinator_pull_rebase", "args": {"paths":[]}}, // git pull --rebase
+            { "caption": "-" },
+            { "caption": "Add", "command": "arcinator_add", "args": {"paths":[]}}, // git add
+            { "caption": "Rename", "command": "arcinator_rename", "args": {"paths":[]}}, // git mv <src> <dest>
+            { "caption": "Delete", "command": "arcinator_delete", "args": {"paths":[]}}, // git rm <file>
+            { "caption": "-" },
+            { "caption": "Diff", "command": "arcinator_diff", "args": {"paths":[]}}, // meld/tortoisediff > make this configureable
+            { "caption": "-" },
+            { "caption": "Status", "command": "arcinator_status", "args": {"paths":[]}}, // git status
+            { "caption": "Log", "command": "arcinator_log", "args": {"paths":[]}}, // git lg
+            { "caption": "-" },
+            { "caption": "Reset", "command": "arcinator_reset", "args": {"paths":[]}}, // git reset
+        ]
+    },
+    { "caption": "-", "id": "end" }
+]
