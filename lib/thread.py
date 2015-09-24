@@ -29,8 +29,10 @@ class Process(Thread):
         self.on_complete = on_complete
         if not paths:
             self.command = cmd
+            self.cwd = sublime.active_window().folders()[0]
         else:
             self.command = cmd + ' ' + self.get_path(paths)
+            self.cwd = self.paths[0]
         if log:
             output.add_command(self.name, self.command)
             output.add_files(self.paths)
@@ -43,7 +45,7 @@ class Process(Thread):
 
     def run(self):
         """Runs the process"""
-        self.process = Popen(self.command, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
+        self.process = Popen(self.command, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True, cwd=self.cwd)
         Process.active_processes.append(self)
         for line in self.process.stdout:
             self.lines.append(line)
