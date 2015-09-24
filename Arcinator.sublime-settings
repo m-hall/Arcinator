@@ -1,0 +1,41 @@
+{
+    // Enables debug output into the sublime console
+    "debug": false,
+
+    // Sets the base file for the global commands
+    // "current": uses the active view as the base
+    // "project": uses the project root folder(s) as the base
+    // path: A file path to use as the base directory
+    // [path]: a list of paths to use as the base directory
+    "commandBaseFiles": "project",
+
+    // Sets where the output goes from commands; if none is set, then "panel" is used
+    // "panel":  opens an output panel at the bottom of the window (default)
+    // "tab":    opens a new tab for output
+    // "dialog": opens an alert dialog for the results of each command
+    "outputTo": "panel",
+
+    // Sets where the output scrolls to when running a command
+    // "command":  Scroll to the top of the command and stay there
+    // "bottom":   Keep the bottom of the output visible
+    "outputScrollTo": "command",
+
+    // Include the raw commands in output
+    "outputRawCommand": false,
+
+    // Set the output gutter style for conflicts
+    // "dot": a small dot
+    // "circle": a circle that fills the width of the gutter
+    // "bookmark": a small arrow indicating the line
+    // "none": no gutter marker
+    "outputGutter": "circle",
+
+    // Set the output highlight style for conflicts
+    // "fill": fills the background of the text
+    // "outline": outlines the selected area
+    // "solid": adds a solid underline to the selected area
+    // "squiggly": adds a squiggly underline to the selected area
+    // "stippled": adds a stippled underline to the selected area
+    // "none": no highlight
+    "outputHighlight": "outline"
+}
