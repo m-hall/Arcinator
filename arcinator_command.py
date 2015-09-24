@@ -9,15 +9,17 @@ from .lib import util, thread, settings, output, panels
 
 STATUS_COMMAND = 'status --porcelain -u all'
 STATUS_UNTRACKED = r'(^|\n)\?\?'
-STATUS_ADDED = r'(^|\n)A[ MD]'
-STATUS_STAGED = r'(^|\n)M[ MD]'
-STATUS_UNSTAGED = r'(^|\n)[ MARC]M'
-STATUS_DELETED = r'(^|\n)D[ M]'
-STATUS_TRACKED = r'(^|\n)[^\?][^\?]'
+STATUS_ADDED = r'^A[ MD]'
+STATUS_STAGED = r'^M[ MD]'
+STATUS_UNSTAGED = r'^[ MARC]M'
+STATUS_DELETED = r'^D[ M]'
+STATUS_TRACKED = r'^[^\?][^\?]'
+
+STATUS_PARSE = r'^.. (.*)'
 
 
 class ArcinatorCommand(sublime_plugin.WindowCommand):
-    """Base command for svn commands"""
+    """Base command for arcinator commands"""
     recent_files = []
 
     def __init__(self, window):
@@ -122,7 +124,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
             sublime.status_message('No changes')
             return False
         items = []
-        for change, modifier, path in matches:
+        for path in matches:
             item = {
                 'label': path,
                 'value': path,
@@ -141,7 +143,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
 
     def select_changes(self):
         """Gets the committable changes"""
-        thread.Process('Log', 'svn status', self.files, False, True, self.on_changes_available)
+        self.run_git(STATUS_COMMAND, self.files, True, True, self.on_changes_available)
 
     def run(self, cmd="", paths=None, group=-1, index=-1):
         """Runs the command"""
@@ -163,7 +165,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
 
 
 class ArcinatorCommitCommand(ArcinatorCommand):
-    """A command that handles committing to SVN"""
+    """A command that handles committing to Git"""
 
     def __init__(self, window):
         """Initialize the command object"""
@@ -177,7 +179,7 @@ class ArcinatorCommitCommand(ArcinatorCommand):
 
     def commit(self):
         """Runs the native commit command"""
-        self.run_command('commit -m "' + util.escape_quotes(self.message) + '"', self.files)
+        self.run_git('commit -m "' + util.escape_quotes(self.message) + '"', self.files)
 
     def verify(self):
         """Checks with the user if the commit is valid"""
@@ -187,11 +189,11 @@ class ArcinatorCommitCommand(ArcinatorCommand):
     def on_done_input(self, value):
         """Handles completion of the input panel"""
         self.message = value
-        minSize = settings.get_native('commitMessageSize', 0)
+        minSize = 0
         if minSize > 0 and len(value) < minSize:
             sublime.status_message('Commit message too short')
             return
-        if settings.get_native('commitConfirm', True):
+        if True:
             self.verify()
         else:
             self.commit()
