@@ -225,8 +225,7 @@ class ArcinatorPushCommand(ArcinatorCommand):
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
-        files = util.get_files(paths, group, index)
-        self.run_command('git push', files)
+        self.run_command('git push', [])
 
 
 class ArcinatorPullCommand(ArcinatorCommand):
