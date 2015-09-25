@@ -14,8 +14,9 @@ STATUS_STAGED = r'^M[ MD]'
 STATUS_UNSTAGED = r'^[ MARC]M'
 STATUS_DELETED = r'^D[ M]'
 STATUS_TRACKED = r'^[^\?][^\?]'
-
 STATUS_PARSE = r'^.. (.*)'
+
+CURRENT_BRANCH_COMMAND = 'git rev-parse --abbrev-ref HEAD'
 
 
 class ArcinatorCommand(sublime_plugin.WindowCommand):
@@ -286,7 +287,7 @@ class ArcinatorSubmitCommand(ArcinatorCommand):
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
-        self.run_git('diff --preview --browse')
+        self.run_arc('diff --preview --browse')
 
 
 class ArcinatorFeatureCommand(ArcinatorCommand):
@@ -301,12 +302,12 @@ class ArcinatorFeatureCommand(ArcinatorCommand):
         }
 
     def on_done_input(self, value):
-        self.run_git('feature ' + value)
+        self.run_arc('feature ' + value)
 
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
-        sublime.active_window().show_input_panel('Commit message', '', self.on_done_input, self.nothing, self.nothing)
+        sublime.active_window().show_input_panel('Feature name', '', self.on_done_input, self.nothing, self.nothing)
 
 
 class ArcinatorLandCommand(ArcinatorCommand):
@@ -323,4 +324,4 @@ class ArcinatorLandCommand(ArcinatorCommand):
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
-        self.run_git('land --svn-post-commit')
+        self.run_arc('land --svn-post-commit')
