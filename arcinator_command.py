@@ -325,3 +325,56 @@ class ArcinatorLandCommand(ArcinatorCommand):
         """Runs the command"""
         util.debug(self.command_name)
         self.run_arc('land --svn-post-commit')
+
+
+class ArcinatorSwitchCommand(ArcinatorCommand):
+    """A command that lands an approved review"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Switch Branch'
+        self.tests = {
+            'tracked': True
+        }
+
+    def on_select_branch(self, index):
+        """Handles completion of the MultiSelect"""
+        self.branch = self.items[index]
+        if index < 0:
+            return
+        self.run_git('checkout ' + self.branch)
+
+    def parse_branches(self, raw):
+        """Parses the output of a status command for use in a MultiSelect"""
+        lines = raw.split('\n')
+        if len(lines) < 1:
+            sublime.status_message('No branches')
+            return False
+        items = []
+        for path in lines:
+            if path[:2] == '* ' or len(path) < 1:
+                continue
+            items.append(path)
+        if len(items) < 1:
+            sublime.status_message('No branches')
+            return False
+        self.items = items
+        return True
+
+    def on_branches_available(self, process):
+        """Shows the list of changes to the user"""
+        output = process.output()
+        if not self.parse_branches(output):
+            return
+        sublime.active_window().show_quick_panel(self.items, self.on_select_branch, sublime.MONOSPACE_FONT)
+
+    def select_branch(self):
+        """Gets the list of branches"""
+        self.run_git('branch', [], True, True, self.on_branches_available)
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        self.files = util.get_files(paths, group, index)
+        self.select_branch()
