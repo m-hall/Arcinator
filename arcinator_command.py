@@ -219,6 +219,24 @@ class ArcinatorCommitCommand(ArcinatorCommand):
             self.select_changes()
 
 
+class ArcinatorPushCommand(ArcinatorCommand):
+    """A command that pushes to the remote"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Push'
+        self.tests = {
+            'tracked': True
+        }
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        files = util.get_files(paths, group, index)
+        self.run_git('push', files)
+
+
 class ArcinatorPullCommand(ArcinatorCommand):
     """A command that updates to HEAD"""
 
@@ -371,7 +389,7 @@ class ArcinatorSwitchCommand(ArcinatorCommand):
 
     def select_branch(self):
         """Gets the list of branches"""
-        self.run_git('branch', [], True, True, self.on_branches_available)
+        self.run_git('branch', [], False, False, self.on_branches_available)
 
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
