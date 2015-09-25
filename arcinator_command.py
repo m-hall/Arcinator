@@ -7,7 +7,7 @@ import subprocess
 import time
 from .lib import util, thread, settings, output, panels
 
-STATUS_COMMAND = 'status --porcelain -u all'
+STATUS_COMMAND = 'git status --porcelain -u all'
 STATUS_UNTRACKED = r'(^|\n)\?\?'
 STATUS_ADDED = r'^A[ MD]'
 STATUS_STAGED = r'^M[ MD]'
@@ -37,14 +37,6 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
         """Starts a process for a native command"""
         return thread.Process(self.command_name, cmd, files, log, async, on_complete)
 
-    def run_git(self, cmd, files=None, log=True, async=True, on_complete=None):
-        """Starts a process for a native command"""
-        return self.run_command('git ' + cmd, files, log, async, on_complete)
-
-    def run_arc(self, cmd, files=None, log=True, async=True, on_complete=None):
-        """Starts a process for a native command"""
-        return self.run_command('arc ' + cmd, files, log, async, on_complete)
-
     def run_external(self, cmd, files):
         """Starts a process for an external command that should run without """
         command = cmd + ' ' + ' '.join(files)
@@ -61,12 +53,12 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
 
     def is_tracked(self, files):
         """Runs a command to verify if a file is tracked"""
-        status = self.run_git(STATUS_COMMAND, files, False, False)
+        status = self.run_command(STATUS_COMMAND, files, False, False)
         return self.test_tracked(status.output())
 
     def is_changed(self, files):
         """Runs a status command to see if a file has been changed since last revision"""
-        status = self.run_git(STATUS_COMMAND, files, False, False)
+        status = self.run_command(STATUS_COMMAND, files, False, False)
         return self.test_changed(status.output())
 
     def is_unchanged(self, files):
@@ -100,7 +92,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
                 continue
             if uid == tests['uid']:
                 return tests
-        status = self.run_git(STATUS_COMMAND, files, False, False)
+        status = self.run_command(STATUS_COMMAND, files, False, False)
         tests = {
             'uid': uid,
             'file': self.is_file(files),
@@ -144,7 +136,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
 
     def select_changes(self):
         """Gets the committable changes"""
-        self.run_git(STATUS_COMMAND, self.files, True, True, self.on_changes_available)
+        self.run_command(STATUS_COMMAND, self.files, True, True, self.on_changes_available)
 
     def run(self, cmd="", paths=None, group=-1, index=-1):
         """Runs the command"""
@@ -180,7 +172,7 @@ class ArcinatorCommitCommand(ArcinatorCommand):
 
     def commit(self):
         """Runs the native commit command"""
-        self.run_git('commit -m "' + util.escape_quotes(self.message) + '"', self.files)
+        self.run_command('git commit -m "' + util.escape_quotes(self.message) + '"', self.files)
 
     def verify(self):
         """Checks with the user if the commit is valid"""
@@ -234,7 +226,7 @@ class ArcinatorPushCommand(ArcinatorCommand):
         """Runs the command"""
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
-        self.run_git('push', files)
+        self.run_command('git push', files)
 
 
 class ArcinatorPullCommand(ArcinatorCommand):
@@ -252,7 +244,7 @@ class ArcinatorPullCommand(ArcinatorCommand):
         """Runs the command"""
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
-        self.run_git('pull', files)
+        self.run_command('git pull', files)
 
 
 class ArcinatorPullRebaseCommand(ArcinatorCommand):
@@ -270,7 +262,7 @@ class ArcinatorPullRebaseCommand(ArcinatorCommand):
         """Runs the command"""
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
-        self.run_git('pull --rebase', files)
+        self.run_command('git pull --rebase', files)
 
 
 class ArcinatorStatusCommand(ArcinatorCommand):
@@ -288,7 +280,7 @@ class ArcinatorStatusCommand(ArcinatorCommand):
         """Runs the command"""
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
-        self.run_git('status --porcelain -u all', files)
+        self.run_command('git status --porcelain -u all', files)
 
 
 class ArcinatorSubmitCommand(ArcinatorCommand):
@@ -305,7 +297,7 @@ class ArcinatorSubmitCommand(ArcinatorCommand):
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
-        self.run_arc('diff --preview --browse')
+        self.run_command('arc diff --preview --browse')
 
 
 class ArcinatorFeatureCommand(ArcinatorCommand):
@@ -320,7 +312,7 @@ class ArcinatorFeatureCommand(ArcinatorCommand):
         }
 
     def on_done_input(self, value):
-        self.run_arc('feature ' + value)
+        self.run_command('arc feature ' + value)
 
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
@@ -342,7 +334,7 @@ class ArcinatorLandCommand(ArcinatorCommand):
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
-        self.run_arc('land --svn-post-commit')
+        self.run_command('arc land --svn-post-commit')
 
 
 class ArcinatorSwitchCommand(ArcinatorCommand):
@@ -361,7 +353,7 @@ class ArcinatorSwitchCommand(ArcinatorCommand):
         self.branch = self.items[index]
         if index < 0:
             return
-        self.run_git('checkout ' + self.branch)
+        self.run_command('git checkout ' + self.branch)
 
     def parse_branches(self, raw):
         """Parses the output of a status command for use in a MultiSelect"""
@@ -389,7 +381,7 @@ class ArcinatorSwitchCommand(ArcinatorCommand):
 
     def select_branch(self):
         """Gets the list of branches"""
-        self.run_git('branch', [], False, False, self.on_branches_available)
+        self.run_command('git branch', [], False, False, self.on_branches_available)
 
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
