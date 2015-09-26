@@ -14,7 +14,7 @@ STATUS_STAGED = r'^M[ MD]'
 STATUS_UNSTAGED = r'^[ MARC]M'
 STATUS_DELETED = r'^D[ M]'
 STATUS_TRACKED = r'^[^\?][^\?]'
-STATUS_PARSE = r'^.. (.*)'
+STATUS_PARSE = r'^.. "?([^"\n]*)'
 
 CURRENT_BRANCH_COMMAND = 'git rev-parse --abbrev-ref HEAD'
 
