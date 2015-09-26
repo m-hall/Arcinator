@@ -478,7 +478,7 @@ class ArcinatorRevertCommand(ArcinatorCommand):
 
     def verify(self):
         """Checks with the user if the revert is valid"""
-        if sublime.ok_cancel_dialog(self.message + '\n\nFiles:\n' + '\n'.join(self.files)):
+        if sublime.ok_cancel_dialog('Are you sure you want to revert these changes?\n\nFiles:\n' + '\n'.join(self.files)):
             self.run_command('git checkout', self.files)
 
     def run(self, paths=None, group=-1, index=-1):
