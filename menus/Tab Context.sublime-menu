@@ -3,7 +3,7 @@
     { "caption": "Commit (local)", "command": "arcinator_commit", "args": {"paths":[]}}, // git commit -m <message> <file...>
     { "caption": "Add", "command": "arcinator_add", "args": {"paths":[]}}, // git add
     { "caption": "Delete", "command": "arcinator_delete", "args": {"paths":[]}}, // git rm <file>
-    { "caption": "Diff", "command": "arcinator_diff", "args": {"paths":[]}}, // meld/tortoisediff > make this configureable
+    { "caption": "Diff", "command": "arcinator_diff", "args": {"group": -1, "index": -1}}, // meld/tortoisediff > make this configureable
     { "caption": "Log", "command": "arcinator_log", "args": {"paths":[]}}, // git lg
     { "caption": "Revert", "command": "arcinator_reset_file", "args": {"paths":[]}}, // git reset
     { "caption": "-", "id": "end" }
