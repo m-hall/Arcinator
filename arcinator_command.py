@@ -430,3 +430,22 @@ class ArcinatorDiffCommand(ArcinatorCommand):
         self.files = util.get_files(paths, group, index)
         appName = settings.get('externalDiffTool')
         self.run_external(appName, self.files)
+
+
+class ArcinatorResetFileCommand(ArcinatorCommand):
+    """Check out the previous commit of the current file"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Diff'
+        self.tests = {
+            'tracked': True
+        }
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        self.files = util.get_files(paths, group, index)
+        appName = settings.get('externalDiffTool')
+        self.run_external(appName, self.files)
