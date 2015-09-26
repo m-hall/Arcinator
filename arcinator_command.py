@@ -39,7 +39,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
 
     def run_external(self, cmd, files):
         """Starts a process for an external command that should run without """
-        command = cmd + ' ' + ' '.join(files)
+        command = cmd + ' "' + '" "'.join(files) + '"'
         util.debug(command)
         return subprocess.Popen(command, stdout=subprocess.PIPE)
 
@@ -337,7 +337,7 @@ class ArcinatorLandCommand(ArcinatorCommand):
 
 
 class ArcinatorSwitchCommand(ArcinatorCommand):
-    """A command that lands an approved review"""
+    """A Command that will switch the current feature branch"""
 
     def __init__(self, window):
         """Initialize the command object"""
@@ -387,3 +387,25 @@ class ArcinatorSwitchCommand(ArcinatorCommand):
         util.debug(self.command_name)
         self.files = util.get_files(paths, group, index)
         self.select_branch()
+
+
+class ArcinatorDiffCommand(ArcinatorCommand):
+    """Run the external diff tool on the specified path"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Diff'
+        self.tests = {
+            'tracked': True
+        }
+
+    def run_external_diff(self):
+        appName = settings.get('externalDiffTool')
+        self.run_external(appName, self.files)
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        self.files = util.get_files(paths, group, index)
+        self.run_external_diff()

@@ -37,5 +37,15 @@
     // "squiggly": adds a squiggly underline to the selected area
     // "stippled": adds a stippled underline to the selected area
     // "none": no highlight
-    "outputHighlight": "outline"
+    "outputHighlight": "outline",
+
+    // Set the external Diff tool that will be launched
+    // Note: the specified diff tool will need to be installed
+    // for the command to work
+    // for example:
+    // "meld": Linux/Windows http://meldmerge.org/
+    // "kdiff3": Linux/Windows/Mac http://kdiff3.sourceforge.net/
+    // "TortoiseIDiff": Windows comes with TortoiseSVN or TortoiseGit
+    // "WinMerge": Windows http://winmerge.org/
+    "externalDiffTool": "TortoiseIDiff"
 }
