@@ -314,6 +314,74 @@ class ArcinatorStatusCommand(ArcinatorCommand):
         self.run_command('git status --porcelain -u all', files)
 
 
+class ArcinatorLogCommand(ArcinatorCommand):
+    """A command that outputs the log of the last 20 commits on the current branch"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Update to revision'
+        self.tests = {
+            'tracked': True
+        }
+        # self.files = None
+        # self.revisions = None
+        # self.logs = None
+
+    # def on_done_input(self, value):
+    #     """Handles the result of the input panel"""
+    #     self.command_name = 'Update to revision (%s)' % value
+    #     self.run_command('update -r %s' % value, self.files)
+
+    # def on_select(self, index):
+    #     """Handles the result of the quickpanel"""
+    #     if index < 0:
+    #         return
+    #     if index >= len(self.revisions):
+    #         self.number = self.number * 2
+    #         self.get_revisions(self.number)
+    #     revision = self.revisions[index]
+    #     self.command_name = 'Update to revision (%s)' % revision
+    #     self.run_command('update -r %s' % revision, self.files)
+
+    # def parse_logs(self, raw):
+    #     """Parses the logs"""
+    #     matches = re.findall(LOG_PARSE, raw, re.M)
+    #     revisions = []
+    #     logs = []
+    #     show_more = len(matches) >= self.number
+    #     for revision, author, date, message in matches:
+    #         revisions.append(revision)
+    #         logs.append([revision + ': ' + message, author, date])
+    #         if int(revision) is 1:
+    #             show_more = False
+    #     if (show_more):
+    #         logs.append('More revisions...')
+    #     self.revisions = revisions
+    #     self.logs = logs
+
+    # def on_logs_available(self, process):
+    #     """Handles the logs being available"""
+    #     output = process.output()
+    #     self.parse_logs(output)
+    #     util.debug('found revisions:' + self.revisions[0] + '-' + self.revisions[-1])
+    #     if len(self.logs) > 0:
+    #         sublime.active_window().show_quick_panel(self.logs, self.on_select)
+
+    # def get_revisions(self, revisions):
+    #     """Runs a process to get log output"""
+    #     thread.Process('Log', 'git log -n' + str(revisions), self.files, False, True, self.on_logs_available)
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        files = util.get_files(paths, group, index)
+        # self.files = files
+        # self.number = settings.get_native('updateToRevisionHistorySize', 20)
+        self.run_command('git log -n20', files)
+        # self.get_revisions(self.number)
+
+
 class ArcinatorSubmitCommand(ArcinatorCommand):
     """A command that sends a feature to arcanist for review"""
 
