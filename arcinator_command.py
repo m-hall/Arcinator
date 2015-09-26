@@ -447,5 +447,4 @@ class ArcinatorResetFileCommand(ArcinatorCommand):
         """Runs the command"""
         util.debug(self.command_name)
         self.files = util.get_files(paths, group, index)
-        appName = settings.get('externalDiffTool')
-        self.run_external(appName, self.files)
+        self.run_command('git checkout', files)
