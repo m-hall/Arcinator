@@ -11,7 +11,7 @@ class Process(Thread):
     """A threaded process"""
     active_processes = []
 
-    def __init__(self, name, cmd, paths=None, log=True, async=False, on_complete=None):
+    def __init__(self, name, cmd, paths=None, log=True, async=False, on_complete=None, cwd=None):
         """Initializes a Process object"""
         Thread.__init__(self)
         self.name = name
@@ -29,15 +29,18 @@ class Process(Thread):
         self.on_complete = on_complete
         if not paths:
             self.command = cmd
-            self.cwd = sublime.active_window().folders()[0]
         else:
             self.command = cmd + ' ' + self.get_path(paths)
-            self.cwd = self.paths[0]
+        if cwd is not None:
+            self.cwd = cwd
+        else:
+            self.cwd = sublime.active_window().folders()[0]
         if log:
             output.add_command(self.name, self.command)
             output.add_files(self.paths)
             output.add_result_section()
         util.debug(self.command)
+        util.debug(self.cwd)
         if self.async:
             self.start()
         else:
