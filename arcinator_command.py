@@ -39,7 +39,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
 
     def run_external(self, cmd, files):
         """Starts a process for an external command that should run without """
-        command = cmd + ' "' + '" "'.join(files) + '"'
+        command = [cmd] + files
         util.debug(command)
         return subprocess.Popen(command, stdout=subprocess.PIPE)
 
@@ -400,12 +400,9 @@ class ArcinatorDiffCommand(ArcinatorCommand):
             'tracked': True
         }
 
-    def run_external_diff(self):
-        appName = settings.get('externalDiffTool')
-        self.run_external(appName, self.files)
-
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
         self.files = util.get_files(paths, group, index)
-        self.run_external_diff()
+        appName = settings.get('externalDiffTool')
+        self.run_external(appName, self.files)
