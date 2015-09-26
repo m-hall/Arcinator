@@ -152,7 +152,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
         tests = self.test_all(files)
         for key in self.tests:
             if tests[key] != self.tests[key]:
-                util.debug(self.command_name + " is not visible because a test failed (%s)" % str(key))
+                util.debug(self.command_name + " is disabled because a test failed (%s)" % str(key))
                 return False
         return True
 
