@@ -146,7 +146,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
         self.command_name = cmd.upper()
         self.run_command(cmd, files)
 
-    def is_visible(self, paths=None, group=-1, index=-1):
+    def is_enabled(self, paths=None, group=-1, index=-1):
         """Checks if the command should be visible"""
         files = util.get_files(paths, group, index)
         tests = self.test_all(files)
