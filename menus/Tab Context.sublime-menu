@@ -5,6 +5,6 @@
     { "caption": "Delete", "command": "arcinator_delete", "args": {"group": -1, "index": -1}}, // git rm <file>
     { "caption": "Diff", "command": "arcinator_diff", "args": {"group": -1, "index": -1}}, // meld/tortoisediff > make this configureable
     { "caption": "Log", "command": "arcinator_log", "args": {"group": -1, "index": -1}}, // git lg
-    { "caption": "Revert", "command": "arcinator_reset_file", "args": {"group": -1, "index": -1}}, // git reset
+    { "caption": "Revert", "command": "arcinator_revert", "args": {"group": -1, "index": -1}}, // git reset
     { "caption": "-", "id": "end" }
 ]

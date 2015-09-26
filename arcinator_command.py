@@ -432,19 +432,33 @@ class ArcinatorDiffCommand(ArcinatorCommand):
         self.run_external(appName, self.files)
 
 
-class ArcinatorResetFileCommand(ArcinatorCommand):
-    """Check out the previous commit of the current file"""
+class ArcinatorRevertCommand(ArcinatorCommand):
+    """Check out the previous commit of the specified files"""
 
     def __init__(self, window):
         """Initialize the command object"""
         super().__init__(window)
-        self.command_name = 'Reset File'
+        self.command_name = 'Revert'
         self.tests = {
             'tracked': True
         }
+
+    def on_complete_select(self, values):
+        """Handles completion of the MultiSelect"""
+        self.files = values
+        self.verify()
+
+    def verify(self):
+        """Checks with the user if the revert is valid"""
+        if sublime.ok_cancel_dialog(self.message + '\n\nFiles:\n' + '\n'.join(self.files)):
+            self.run_command('git checkout', self.files)
 
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
-        self.run_command('git checkout', files)
+        self.files = files
+        if self.is_file(files):
+            self.verify()
+        else:
+            self.select_changes()

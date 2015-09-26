@@ -29,8 +29,8 @@
             { "caption": "Status", "command": "arcinator_status", "args": {"paths":[]}}, // git status
             { "caption": "Log", "command": "arcinator_log", "args": {"paths":[]}}, // git lg
             { "caption": "-" },
-            { "caption": "Reset", "command": "arcinator_reset", "args": {"paths":[]}}, // git reset
-            { "caption": "Reset File", "command": "arcinator_reset_file", "args": {"paths":[]}},
+            { "caption": "Revert", "command": "arcinator_revert", "args": {"paths":[]}} // git checkout specified files
+            //{ "caption": "Reset File", "command": "arcinator_reset_file", "args": {"paths":[]}},
         ]
     },
     { "caption": "-", "id": "end" }
