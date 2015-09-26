@@ -136,7 +136,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
 
     def select_changes(self):
         """Gets the committable changes"""
-        self.run_command(STATUS_COMMAND, self.files, True, True, self.on_changes_available)
+        self.run_command(STATUS_COMMAND, self.files, False, False, self.on_changes_available)
 
     def run(self, cmd="", paths=None, group=-1, index=-1):
         """Runs the command"""
@@ -146,7 +146,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
         self.command_name = cmd.upper()
         self.run_command(cmd, files)
 
-    def is_visible(self, paths=None, group=-1, index=-1):
+    def is_enabled(self, paths=None, group=-1, index=-1):
         """Checks if the command should be visible"""
         files = util.get_files(paths, group, index)
         tests = self.test_all(files)
@@ -299,7 +299,7 @@ class ArcinatorSubmitCommand(ArcinatorCommand):
         self.run_command('arc diff --preview --browse')
 
 
-class ArcinatorFeatureCommand(ArcinatorCommand):
+class ArcinatorFeatureFromCurrentCommand(ArcinatorCommand):
     """A command that creates a new feature branch and switches the working copy to it"""
 
     def __init__(self, window):
