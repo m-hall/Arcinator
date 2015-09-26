@@ -6,16 +6,19 @@
     {
         "caption": "Arcinator",
         "children": [
-            { "caption": "New Feature", "command": "arcinator_feature", "args": {"paths":[]}}, // arc feature <name>
-            { "caption": "Switch to feature", "command": "arcinator_switch", "args": {"paths":[]}}, // git checkout <name>
+            { "caption": "New Feature From Trunk", "command": "arcinator_feature", "args": {"paths":[]}}, // arc feature <name>
+            { "caption": "New Feature From Current Branch", "command": "arcinator_feature_from_current", "args": {"paths":[]}}, // arc feature <name>
+            { "caption": "Switch To Feature", "command": "arcinator_switch", "args": {"paths":[]}}, // git checkout <name>
             { "caption": "-" },
             { "caption": "Submit For Review", "command": "arcinator_submit", "args": {"paths":[]}}, // arc diff --preview --browse
+            { "caption": "Apply Patch", "command": "arcinator_patch", "args": {"paths":[]}},
             { "caption": "Land Review", "command": "arcinator_land", "args": {"paths":[]}}, // arc land --svn-post-commit
+            { "caption": "Land Review Onto...", "command": "arcinator_land_onto", "args": {"paths":[]}},
             { "caption": "-" },
-            { "caption": "Commit (local)", "command": "arcinator_commit", "args": {"paths":[]}}, // git commit -m <message> <file...>
-            { "caption": "Push (remote)", "command": "arcinator_push", "args": {"paths":[]}}, // git push
-            { "caption": "Pull (remote)", "command": "arcinator_pull", "args": {"paths":[]}}, // git pull
-            { "caption": "Pull Rebase (remote)", "command": "arcinator_pull_rebase", "args": {"paths":[]}}, // git pull --rebase
+            { "caption": "Commit (Local)", "command": "arcinator_commit", "args": {"paths":[]}}, // git commit -m <message> <file...>
+            { "caption": "Push (Remote)", "command": "arcinator_push", "args": {"paths":[]}}, // git push
+            { "caption": "Pull (Remote)", "command": "arcinator_pull", "args": {"paths":[]}}, // git pull
+            { "caption": "Pull Rebase (Remote)", "command": "arcinator_pull_rebase", "args": {"paths":[]}}, // git pull --rebase
             { "caption": "-" },
             { "caption": "Add", "command": "arcinator_add", "args": {"paths":[]}}, // git add
             { "caption": "Rename", "command": "arcinator_rename", "args": {"paths":[]}}, // git mv <src> <dest>
@@ -27,6 +30,7 @@
             { "caption": "Log", "command": "arcinator_log", "args": {"paths":[]}}, // git lg
             { "caption": "-" },
             { "caption": "Reset", "command": "arcinator_reset", "args": {"paths":[]}}, // git reset
+            { "caption": "Reset File", "command": "arcinator_reset_file", "args": {"paths":[]}},
         ]
     },
     { "caption": "-", "id": "end" }
