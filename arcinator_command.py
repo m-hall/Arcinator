@@ -438,7 +438,7 @@ class ArcinatorResetFileCommand(ArcinatorCommand):
     def __init__(self, window):
         """Initialize the command object"""
         super().__init__(window)
-        self.command_name = 'Diff'
+        self.command_name = 'Reset File'
         self.tests = {
             'tracked': True
         }
