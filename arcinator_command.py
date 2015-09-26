@@ -299,6 +299,30 @@ class ArcinatorSubmitCommand(ArcinatorCommand):
         self.run_command('arc diff --preview --browse')
 
 
+class ArcinatorFeatureCommand(ArcinatorCommand):
+    """A command that creates a new feature branch and switches the working copy to it"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'New Feature'
+        self.tests = {
+            'tracked': True
+        }
+
+    def on_done_input(self, value):
+        self.run_command('arc feature ' + value)
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        p = self.run_command('git checkout trunk', [], False, False)
+        if p.returncode != 0:
+            sublime.message_dialog('Could not switch to trunk:\n' + p.output() + '\n' + p.error())
+            return
+        sublime.active_window().show_input_panel('Feature name', '', self.on_done_input, self.nothing, self.nothing)
+
+
 class ArcinatorFeatureFromCurrentCommand(ArcinatorCommand):
     """A command that creates a new feature branch and switches the working copy to it"""
 
