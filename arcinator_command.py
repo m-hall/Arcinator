@@ -446,5 +446,5 @@ class ArcinatorResetFileCommand(ArcinatorCommand):
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
-        self.files = util.get_files(paths, group, index)
+        files = util.get_files(paths, group, index)
         self.run_command('git checkout', files)
