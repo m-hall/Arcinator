@@ -32,25 +32,6 @@
 							{
 								"command": "open_file",
 								"args": {
-									"file": "${packages}/Arcinator/menus/Default Side Bar.sublime-menu"
-								},
-								"caption": "Side Bar - Default"
-							},
-							{
-								"command": "open_file",
-								"args": {
-									"file": "${packages}/User/Arcinator/Side Bar.sublime-menu"
-								},
-								"caption": "Side Bar - User"
-							},
-							{
-								"command": "hypno_reset_side_bar",
-								"caption": "Side Bar - Reset To Default"
-							},
-							{ "caption": "-" },
-							{
-								"command": "open_file",
-								"args": {
 									"file": "${packages}/Arcinator/keymaps/Default (Windows).sublime-keymap",
 									"platform": "Windows"
 								},
