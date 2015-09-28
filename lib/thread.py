@@ -49,6 +49,8 @@ class Process(Thread):
     def run(self):
         """Runs the process"""
         self.process = Popen(self.command, stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True, cwd=self.cwd)
+        self.process.stdout.encoding = "UTF8"
+        self.process.stderr.encoding = "UTF8"
         Process.active_processes.append(self)
         for line in self.process.stdout:
             self.lines.append(line)
