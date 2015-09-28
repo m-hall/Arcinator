@@ -18,6 +18,11 @@ STATUS_PARSE = r'^.. "?([^"\n]*)'
 
 CURRENT_BRANCH_COMMAND = 'git rev-parse --abbrev-ref HEAD'
 
+LOG_FORMAT = 'git log --pretty=format:"%H - <%an> {%ar} %s"'
+LOG_PARSE = r'^(\S*) - <([^>]*)> {([^}]*)} (.*)'
+
+LOG_FULL = 'git show --name-only'
+
 
 class ArcinatorCommand(sublime_plugin.WindowCommand):
     """Base command for arcinator commands"""
@@ -320,66 +325,59 @@ class ArcinatorLogCommand(ArcinatorCommand):
     def __init__(self, window):
         """Initialize the command object"""
         super().__init__(window)
-        self.command_name = 'Update to revision'
+        self.command_name = 'Log'
         self.tests = {
             'tracked': True
         }
-        # self.files = None
-        # self.revisions = None
-        # self.logs = None
+        self.files = None
+        self.revisions = None
+        self.logs = None
+        self.number = 20
 
-    # def on_done_input(self, value):
-    #     """Handles the result of the input panel"""
-    #     self.command_name = 'Update to revision (%s)' % value
-    #     self.run_command('update -r %s' % value, self.files)
+    def on_select(self, index):
+        """Handles the result of the quickpanel"""
+        if index < 0:
+            return
+        if index >= len(self.revisions):
+            self.number = self.number * 2
+            self.get_revisions()
+            return
+        revision = self.revisions[index]
+        self.command_name = 'Log revision (%s)' % revision
+        self.run_command(LOG_FULL + ' ' + revision)
 
-    # def on_select(self, index):
-    #     """Handles the result of the quickpanel"""
-    #     if index < 0:
-    #         return
-    #     if index >= len(self.revisions):
-    #         self.number = self.number * 2
-    #         self.get_revisions(self.number)
-    #     revision = self.revisions[index]
-    #     self.command_name = 'Update to revision (%s)' % revision
-    #     self.run_command('update -r %s' % revision, self.files)
+    def parse_logs(self, raw):
+        """Parses the logs"""
+        matches = re.findall(LOG_PARSE, raw, re.M)
+        revisions = []
+        logs = []
+        show_more = len(matches) >= self.number
+        for revision, author, date, message in matches:
+            revisions.append(revision)
+            logs.append([message, revision, author + ' - ' + date])
+        if (show_more):
+            logs.append('More revisions...')
+        self.revisions = revisions
+        self.logs = logs
 
-    # def parse_logs(self, raw):
-    #     """Parses the logs"""
-    #     matches = re.findall(LOG_PARSE, raw, re.M)
-    #     revisions = []
-    #     logs = []
-    #     show_more = len(matches) >= self.number
-    #     for revision, author, date, message in matches:
-    #         revisions.append(revision)
-    #         logs.append([revision + ': ' + message, author, date])
-    #         if int(revision) is 1:
-    #             show_more = False
-    #     if (show_more):
-    #         logs.append('More revisions...')
-    #     self.revisions = revisions
-    #     self.logs = logs
+    def on_logs_available(self, process):
+        """Handles the logs being available"""
+        output = process.output()
+        self.parse_logs(output)
+        util.debug('found %s revisions' % str(len(self.revisions)))
+        if len(self.logs) > 0:
+            sublime.active_window().show_quick_panel(self.logs, self.on_select)
 
-    # def on_logs_available(self, process):
-    #     """Handles the logs being available"""
-    #     output = process.output()
-    #     self.parse_logs(output)
-    #     util.debug('found revisions:' + self.revisions[0] + '-' + self.revisions[-1])
-    #     if len(self.logs) > 0:
-    #         sublime.active_window().show_quick_panel(self.logs, self.on_select)
-
-    # def get_revisions(self, revisions):
-    #     """Runs a process to get log output"""
-    #     thread.Process('Log', 'git log -n' + str(revisions), self.files, False, True, self.on_logs_available)
+    def get_revisions(self):
+        """Runs a process to get log output"""
+        thread.Process('Log', LOG_FORMAT + ' -n' + str(self.number), self.files, False, True, self.on_logs_available)
 
     def run(self, paths=None, group=-1, index=-1):
         """Runs the command"""
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
-        # self.files = files
-        # self.number = settings.get_native('updateToRevisionHistorySize', 20)
-        self.run_command('git log -n20', files)
-        # self.get_revisions(self.number)
+        self.files = files
+        self.get_revisions()
 
 
 class ArcinatorSubmitCommand(ArcinatorCommand):
