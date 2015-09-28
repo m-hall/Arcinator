@@ -1,6 +1,6 @@
 import sublime
 import sublime_plugin
-from .lib import thread, menu
+from .lib import thread
 
 
 class ArcinatorKillProcessesCommand(sublime_plugin.WindowCommand):
