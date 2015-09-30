@@ -301,6 +301,59 @@ class ArcinatorPullRebaseCommand(ArcinatorCommand):
         self.run_command('git pull --rebase', files)
 
 
+class ArcinatorSvnFetchCommand(ArcinatorCommand):
+    """A command that fetches new commits from the remote"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'SVN Fetch'
+        self.tests = {}
+
+    def svn_rebase(self, process):
+        if process.returncode is not 0:
+            sublime.status_message('Dag namit!')
+            return
+        self.command_name = 'SVN Fetch - Rebase Git from SVN'
+        self.run_command('git svn rebase', [])
+
+    def svn_fetch(self, process):
+        if process.returncode is not 0:
+            sublime.status_message('Dag namit!')
+            return
+        self.command_name = 'SVN Fetch - SVN Fetch'
+        self.run_command('git svn fetch', [], on_complete=self.svn_rebase)
+
+    def pull(self, process):
+        if process.returncode is not 0:
+            sublime.status_message('Dag namit!')
+            return
+        self.command_name = 'SVN Fetch - Pull in new changes'
+        self.run_command('git pull --ff-only --no-stat', [], on_complete=self.svn_fetch)
+
+    def git_fetch(self, process=None):
+        if process is not None:
+            if process.returncode is not 0:
+                sublime.status_message('Dag namit!')
+                return
+        self.command_name = 'SVN Fetch - Git Fetch'
+        self.run_command('git fetch', [], on_complete=self.pull)
+
+    def switch_trunk(self):
+        self.command_name = 'SVN Fetch - Switch to trunk'
+        self.run_command('git checkout trunk', [], on_complete=self.git_fetch)
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug(self.command_name)
+        p = self.run_command(CURRENT_BRANCH_COMMAND, [], False, False)
+        if p.output() == 'trunk':
+            self.git_fetch()
+        elif sublime.ok_cancel_dialog('This operation must be done from trunk, would you like to switch branches?'):
+            self.switch_trunk()
+
+
+
 class ArcinatorStatusCommand(ArcinatorCommand):
     """A command that gets the status of the repo"""
 
