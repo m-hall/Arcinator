@@ -21,6 +21,7 @@
     { "caption": "Arcinator: Push (remote)", "command": "arcinator_push"},
     { "caption": "Arcinator: Pull (remote)", "command": "arcinator_pull"},
     { "caption": "Arcinator: Pull Rebase (remote)", "command": "arcinator_pull_rebase"},
+    { "caption": "Arcinator: SVN Fetch", "command": "arcinator_svn_fetch"},
     { "caption": "Arcinator: Add", "command": "arcinator_add"},
     { "caption": "Arcinator: Rename", "command": "arcinator_rename"},
     { "caption": "Arcinator: Delete", "command": "arcinator_delete"},
