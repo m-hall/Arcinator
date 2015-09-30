@@ -316,7 +316,7 @@ class ArcinatorStatusCommand(ArcinatorCommand):
         """Runs the command"""
         util.debug(self.command_name)
         files = util.get_files(paths, group, index)
-        self.run_command('git status --porcelain -u all', files)
+        self.run_command('git status -u all', files)
 
 
 class ArcinatorLogCommand(ArcinatorCommand):
