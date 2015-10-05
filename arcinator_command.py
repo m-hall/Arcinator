@@ -609,3 +609,51 @@ class ArcinatorRevertCommand(ArcinatorCommand):
             self.verify()
         else:
             self.select_changes()
+
+class ArcinatorDiffAgainstTrunkCommand(ArcinatorCommand):
+    """Run the git defined difftool on the current branch versus trunk"""
+
+    def __init__(self, window):
+        """Initialize the command object"""
+        super().__init__(window)
+        self.command_name = 'Diff'
+        self.tests = {
+            'tracked': True
+        }
+
+    def on_select_branch(self, index):
+        """Handles completion of the MultiSelect"""
+        self.branch = self.items[index]
+        if index < 0:
+            return
+        command = 'git difftool --dir-diff trunk..' + self.branch
+        util.debug('running: ' + command)
+        self.run_command(command)
+
+
+    def select_branch_to_diff(self):
+        """show branch selector"""
+        util.debug('select branch to diff with')
+        self.select_branch() # run the multi select
+
+    def on_check_diff_tool(self, process):
+        """if a difftool is defined continue otherwise don't run the tool"""
+        output = process.output()
+        if output:
+            util.debug('difftool "' + output + '" found, select branch to diff with')
+            self.select_branch_to_diff()
+        else:
+            util.debug('no difftool defined')
+            sublime.message_dialog('No difftool defined by git. Please run:\n\ngit config --global diff.tool meld')
+
+    def check_diff_tool(self):
+        """Get the diff.tool defined in git"""
+        command = 'git config diff.tool'
+        util.debug('checking if difftool is defined')
+        self.run_command('git config diff.tool', [], False, False, self.on_check_diff_tool)
+
+
+    def run(self, paths=None, group=-1, index=-1):
+        """Runs the command"""
+        util.debug('\n\n'+self.command_name)
+        self.check_diff_tool()

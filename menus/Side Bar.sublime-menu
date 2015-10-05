@@ -24,7 +24,8 @@
             { "caption": "Rename", "command": "arcinator_rename", "args": {"paths":[]}}, // git mv <src> <dest>
             { "caption": "Delete", "command": "arcinator_delete", "args": {"paths":[]}}, // git rm <file>
             { "caption": "-" },
-            { "caption": "Diff", "command": "arcinator_diff", "args": {"paths":[]}}, // meld/tortoisediff > make this configureable
+            { "caption": "Diff non-commited changes", "command": "arcinator_diff", "args": {"paths":[]}}, // meld
+            { "caption": "Diff branch against trunk", "command": "arcinator_diff_against_trunk", "args": {"paths":[]}}, // meld
             { "caption": "-" },
             { "caption": "Status", "command": "arcinator_status", "args": {"paths":[]}}, // git status
             { "caption": "Log", "command": "arcinator_log", "args": {"paths":[]}}, // git lg
