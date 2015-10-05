@@ -167,6 +167,7 @@ class ArcinatorCommand(sublime_plugin.WindowCommand):
     def on_branches_available(self, process):
         """Shows the list of changes to the user"""
         output = process.output()
+        util.debug(output)
         if not self.parse_branches(output):
             return
         sublime.active_window().show_quick_panel(self.items, self.on_select_branch, sublime.MONOSPACE_FONT)
@@ -624,12 +625,30 @@ class ArcinatorDiffAgainstTrunkCommand(ArcinatorCommand):
     def on_select_branch(self, index):
         """Handles completion of the MultiSelect"""
         self.branch = self.items[index]
+        if self.branch[:2] == '* ':
+            self.branch = self.branch.strip('* ').strip()
         if index < 0:
             return
         command = 'git difftool --dir-diff trunk..' + self.branch
         util.debug('running: ' + command)
         self.run_command(command)
 
+    def parse_branches(self, raw):
+        """Parses the output of a status command for use in a MultiSelect"""
+        lines = raw.split('\n')
+        if len(lines) < 1:
+            sublime.status_message('No branches')
+            return False
+        items = []
+        for path in lines:
+            if len(path) < 1 or path.strip() == 'trunk':
+                continue
+            items.append(path.strip())
+        if len(items) < 1:
+            sublime.status_message('No branches')
+            return False
+        self.items = items
+        return True
 
     def select_branch_to_diff(self):
         """show branch selector"""
